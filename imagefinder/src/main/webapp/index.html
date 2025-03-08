@@ -1,123 +1,161 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Image Finder</title>
+
+    <!-- Bootstrap for Styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+            color: #007bff;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .gallery img {
+            width: 200px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .gallery img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal styles */
+        .modal-img-container {
+            text-align: center;
+            padding: 20px;
+        }
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
 </head>
 <body>
-	<h1>Eulerity Take-Home Challenge</h1>
 
-	<h2>How it works</h2>
-	<ul>
-		<li>Pressing the submit button on this page will make a POST
-			request to /main</li>
-		<li>That request will contain a form parameter with the url
-			populated in the input box below</li>
-		<li>The ImageFinder servlet will respond to the request with a
-			list of image urls</li>
-		<li>This page contains javascript to send the request and use the
-			response to build a list of images</li>
-	</ul>
-	<h2>Backend Developers</h2>
-	<ul>
-		<li>You can update the ImageFinder servlet to add crawling logic</li>
-		<li>Feel free to add as many classes/packages/files/third party
-			libraries as you'd like</li>
-		<li>We recommend JSoup for parsing web pages</li>
-		<li>You can update this page's html/css/style if you plan on
-			improving the interface</li>
-		<li>Your final submission does not need to contain any of the
-			files included herein</li>
-		<li>This project is just skeleton code so you can hit the ground
-			running.</li>
-		<li>Some ideas:
-			<ul>
-			<li>Crawl not only the given url, but other pages in the same domain</li>
-			<li>Make your crawler multithreaded to speed up response times</li>
-			<li>Be a friendly crawler and try not to hammer a site</li>
-			<li>Think about how to identify different classes of images and do they need special handling</li>
-			<li>Can you identify images as logos? Perhaps collect favicons?</li>
-			<li>Can you mark images that contain people?</li>
-			</ul>
-		</li>
-	</ul>
-	<h2>Important Notes</h2>
-	<p>Congratulations on making it this far into the interview
-		process!</p>
-	<p>
-	This is a free-form hackathon for a very important reason. We wish to see what ideas you can bring to the table.
-	</p>
-	<p><strong>If your submission only contains 5-10 lines of new code, please think twice about submitting it.</strong> If you need more time, you can ask for it.
-	</p>
-	<p>
-	You can use one of the ideas above, but feel free to go off and build something completely different. 
-	The important thing is to submit something that highlights your strengths as a developer.
-	</p>
-	<p>
-	  <b>Remember, this is your chance to show off how you can best contribute to our team.</b>
-	</p>
-	<p>Please remember to think about good design and code style. Comments in your code are great, but thought should also be taken in how to name your variables and method.</p>
+    <div class="container">
+        <h1>Interactive Image Finder</h1>
+        
+        <!-- Input Section -->
+        <div class="input-group">
+            <input type="text" id="urlInput" class="form-control" placeholder="Enter website URL...">
+            <button id="fetchButton" class="btn btn-primary">Fetch Images</button>
+        </div>
 
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">Fetching images... Please wait.</div>
 
+        <!-- Image Results -->
+        <div class="gallery" id="results"></div>
+    </div>
 
-	<div class="content">
-		<div class="input">
-			<form>
-				<input type="text" name="url">
-			</form>
-			<button type="button">Submit!</button>
-		</div>
-		<div class="output">
-			<ul class="results">
+    <!-- Bootstrap Modal for Enlarged Image View -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-img-container">
+                        <img id="modalImage" class="modal-img" src="" alt="Enlarged Image">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-			</ul>
-		</div>
-	</div>
-	<script>
-		var resultList = document.querySelector('ul.results');
-		var urlInput = document.querySelector('input[name=url]')
+    <!-- Bootstrap JS (Make sure this is loaded!) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-		apiCallBack = function(xhr, callback) {
-			if (xhr.readyState == XMLHttpRequest.DONE) {
-				if (xhr.status != 200) {
-					let message = xhr.status + ":" + xhr.statusText + ":"
-							+ xhr.responseText;
-					alert(message);
-					throw 'API call returned bad code: ' + xhr.status;
-				}
-				let response = xhr.responseText ? JSON.parse(xhr.responseText)
-						: null;
-				if (callback) {
-					callback(response);
-				}
-			}
-		}
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const loading = document.getElementById('loading');
 
-		updateList = function(response) {
-    resultList.innerHTML = '';
+            if (!urlInput) {
+                alert("Please enter a valid URL.");
+                return;
+            }
 
-    // Since response is now a set (converted to an array in JSON), we don't need to extract response[0]
-    let imageUrls = Array.isArray(response) ? response : [];
+            // Clear previous results
+            resultsDiv.innerHTML = "";
+            loading.style.display = "block";
 
-    for (let i = 0; i < imageUrls.length; i++) {
-        let img = document.createElement("img");
-        img.width = 200;
-        img.src = imageUrls[i].trim(); // Trim any spaces
-        resultList.appendChild(img);
-    }
-};
+            // API Call
+            fetch('/main?url=' + encodeURIComponent(urlInput), {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(imageUrls => {
+                loading.style.display = "none";
+                
+                if (imageUrls.length === 0) {
+                    resultsDiv.innerHTML = "<p>No images found.</p>";
+                    return;
+                }
 
+                // Display images
+                imageUrls.forEach(imgUrl => {
+                    let imgElement = document.createElement("img");
+                    imgElement.src = imgUrl.trim();
+                    imgElement.alt = "Extracted Image";
+                    imgElement.onclick = function() {
+                        openModal(imgUrl);
+                    };
+                    resultsDiv.appendChild(imgElement);
+                });
+            })
+            .catch(error => {
+                loading.style.display = "none";
+                console.error("Error fetching images:", error);
+                resultsDiv.innerHTML = "<p style='color:red;'>Failed to fetch images.</p>";
+            });
+        });
 
+        // Function to open modal with the clicked image
+        function openModal(imageUrl) {
+            document.getElementById('modalImage').src = imageUrl;
+            let modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            modal.show();
+        }
+    </script>
 
-		makeApiCall = function(url, method, obj, callback) {
-			let xhr = new XMLHttpRequest();
-			xhr.open(method, url);
-			xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);
-			xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);
-		}
-
-		document.querySelector('button').addEventListener("click", function(event) {
-			event.preventDefault();
-			makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);
-		});
-	</script>
 </body>
-
 </html>

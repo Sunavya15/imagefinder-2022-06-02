@@ -1,66 +1,89 @@
-# Eulerity Hackathon Challenge
-Congratulations on making it to this stage of Eulerity's interview process! In this folder is a project for a partially built web application whose goal is to crawl a provided URL and pick out the images from it. This README will provide more information about the goals of the project, its structure, and setup and submission instructions.
+##### Image Finder Web Scraper - Eulerity Take-Home Challenge
+## Overview
+This project is a web crawler and image extractor that scans a given URL, extracts images, classifies them, and displays the results. The application utilizes Selenium, OpenCV, and JSoup for image extraction, processing, and face detection.
 
-## ImageFinder Goal
-The goal of this task is to perform a web crawl on a URL string provided by the user. From the crawl, you will need to parse out all of the images on that web page and return a JSON array of strings that represent the URLs of all images on the page. [Jsoup](https://jsoup.org/) is a great basic library for crawling and is already included as a maven dependency in this project, however you are welcome to use whatever library you would like.
+## Features Implemented
+✅ Web Scraping & Image Extraction
+Implemented a web crawler using JSoup and Selenium to scrape images from web pages.
 
-### Required Functionality
-We expect your submission to be able to achieve the following goals:
-- Build a web crawler that can find all images on the web page(s) that it crawls.
-- Crawl sub-pages to find more images.
-- Implement multi-threading so that the crawl can be performed on multiple sub-pages at a time.
-- Keep your crawl within the same domain as the input URL.
-- Avoid re-crawling any pages that have already been visited.
+## Extracts images from:
+<img> tags
+## Background images (style="background-image:url(...)")
+<source> tags (srcset attribute for responsive images)
+✅ Multithreaded Web Crawler
+Designed the CrawlerService to crawl multiple pages concurrently for better performance.
+Uses an executor service to manage crawling threads efficiently.
+✅ Image Resizing
+Resized images to a standardized dimension (350x350) using Java’s BufferedImage API.
+Ensured images retain quality while resizing.
+✅ Image Categorization
+Developed a classification system to identify:
+Favicons (Very small images, ≤ 32x32 pixels)
+Logos (Square-shaped images, typically small)
+Images Containing People (Implemented face detection)
+✅ Face Detection
+Implemented face detection using OpenCV’s Haar Cascade Classifier (haarcascade_frontalface_alt.xml).
+Used BufferedImage to Mat conversion for OpenCV image processing.
+Detected human faces in images to categorize people-containing images.
+✅ Dynamic Web Interface (Frontend)
+Improved UI with Bootstrap for a modern, interactive look.
 
-### Extra Functionality
-No individual point below is explicitly required, but we recommend trying to achieve some extra goals as well, such as the following:
-- Make your crawler "friendly" - try not to get banned from the site by performing too many crawls.
-- Try to detect what images might be considered logos.
-- Show off your front-end dev skills with Javascript, HTML, and/or CSS to make the site look more engaging.
-- Any other way you feel you can show off your strengths as a developer 😊
+## Added:
+Loading spinner while fetching images.
+Gallery layout for displaying extracted images.
+Popup modal when clicking images for better user interaction.
+✅ Deployment on Jetty
+Packaged the project as a WAR file.
+Deployed on Jetty Server for testing.
+Configured Jetty Start.ini to load OpenCV dynamically.
+✅ Testing
+Implemented JUnit tests in ImageFinderTest.java.
+Used Mockito to mock API requests and responses.
+Verified that extracted images are correctly fetched and classified.
+✅ Git Integration
+Set up Git version control for tracking changes.
+Added a proper .gitignore to exclude unnecessary files.
+Committed the latest code updates.
+Technologies Used
+Backend: Java, Servlet API, JSoup, Selenium
+Frontend: HTML, CSS (Bootstrap), JavaScript (Fetch API)
 
-**PLEASE do not send us a submission with only a basic JSoup crawl and only a couple lines of code.** This is your chance to prove what you could contribute to our team.
+### Libraries:
+OpenCV (for face detection & image processing)
+Selenium (for dynamic web page interaction)
+JSoup (for parsing HTML & extracting image links)
+Testing Frameworks: JUnit, Mockito
+Build & Deployment: Maven, Jetty Server
+Setup & Deployment Guide
+Prerequisites
+Install Java 8+
+Install Maven
+Install Jetty Server
+Download OpenCV 3.4.16 and configure the opencv_java3416.dll
+How to Run
+Clone the Repository:
 
-You have one week to work on the submission from the time when you receive it. To submit you assignment, zip up your project (`imagefinder.zip`) and email it back to me. **Please include a list of URLs that you used to test in your submissions.** You should place them in the attached `test-links.txt` file found in the root of this project.
+# command:
+Copy
+Edit
+git clone <repository-url>
+cd imagefinder
+Build & Package the Project:
 
-## Structure
-The ImageFinder servlet is found in `src/main/java/com/eulerity/hackathon/imagefinder/ImageFinder.java`. This is the only provided Java class. Feel free to add more classes or packages as you see fit. 
+# command:
+Copy
+Edit
+mvn clean package
+Run on Jetty Server:
 
-The main landing page for this project can be found in `src/main/webapp/index.html`. This page contains more instructions and serves as the starting page for the web application. You may edit this page as much as it suits you, and/or add other pages. 
+# command:
+Copy
+Edit
+mvn jetty:run
+Access the Web Interface: Open http://localhost:8080 in your browser.
 
-Finally, in the root directory of this project, you will find the `pom.xml`. This contains the project configuration details used by maven to build the project. If you want/need to use outside dependencies, you should add them to this file.
-
-## Running the Project
-Here we will detail how to setup and run this project so you may get started, as well as the requirements needed to do so.
-
-### Requirements
-Before beginning, make sure you have the following installed and ready to use
-- Maven 3.5 or higher
-- Java 8
-  - Exact version, **NOT** Java 9+ - the build will fail with a newer version of Java
-
-### Setup
-To start, open a terminal window and navigate to wherever you unzipped to the root directory `imagefinder`. To build the project, run the command:
-
->`mvn package`
-
-If all goes well you should see some lines that end with "BUILD SUCCESS". When you build your project, maven should build it in the `target` directory. To clear this, you may run the command:
-
->`mvn clean`
-
-To run the project, use the following command to start the server:
-
->`mvn clean test package jetty:run`
-
-You should see a line at the bottom that says "Started Jetty Server". Now, if you enter `localhost:8080` into your browser, you should see the `index.html` welcome page! If all has gone well to this point, you're ready to begin!
-
-## Submission
-When you are finished working on the project, before zipping up and emailing back your submission, **PLEASE RUN ONE LAST `mvn clean` COMMAND TO REMOVE ANY UNNECESSARY FILES FROM YOUR SUBMISSION**. Please also make sure to add the URLs you used to test your project to the `test-links.txt` file. After doing these things, you may zip up the root directory (`imagefinder`) and email it back to us.
-
-## Final Notes
-- If you feel you need more time to work, you are free to ask for it.
-- If you are having any trouble, especially with the setup, please reach out and we will try to answer as soon as we can.
-- The ideas listed above on how to expand the project are great starting points, but feel free to add in your own ideas as well.
-- Try to follow some good-practice principles when working on your code, such as meaningful and clean variable/method names and other good coding practices.
-- The code we have provided is to allow you to hit the ground running. You are free to use whatever web service you would like (as long as you use Java 8 and it is runnable from the command line).
-- We look forward to seeing what you can do, so good luck and have fun 😊
+## Future Improvements
+Enhance face detection using DNN-based models (OpenCV DNN).
+Improve logo detection using custom ML models.
+Optimize the crawling process to prevent duplicate requests.
+Store processed images in a database instead of saving locally.

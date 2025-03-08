@@ -47,16 +47,16 @@ public class ImageFinderTest {
     public void testDoPostWithoutResizing() throws IOException, ServletException {
         // Set servlet path and URL parameter.
         Mockito.when(request.getServletPath()).thenReturn("/main");
-        Mockito.when(request.getParameter("url")).thenReturn("http://someurl.com");
+        Mockito.when(request.getParameter("url")).thenReturn("https://www.mommysheartfoundation.com/");
 
         // Create a mock CrawlerService.
         CrawlerService mockCrawlerService = Mockito.mock(CrawlerService.class);
 
         // Define a list of image URLs, including a duplicate.
         List<String> mockImageUrls = Arrays.asList(
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg",
-            "https://example.com/image1.jpg"  // duplicate
+            "https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/2b367532-3481-4cd0-99b7-c5b9548f0c9d/heart-hands.jpg?format=2500w",
+            "https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/1675477709442-3K4OIXL4L1XJ3N6ZEIXZ/image-asset.jpeg?format=500w",
+            "https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/1675477709442-3K4OIXL4L1XJ3N6ZEIXZ/image-asset.jpeg?format=500w"  // duplicate
         );
         Mockito.when(mockCrawlerService.crawl(Mockito.anyString())).thenReturn(mockImageUrls);
 
@@ -73,8 +73,8 @@ public class ImageFinderTest {
 
         // Build the expected JSON response (a set of unique URLs).
         Set<String> expectedResponseSet = new HashSet<>();
-        expectedResponseSet.add("https://example.com/image1.jpg");
-        expectedResponseSet.add("https://example.com/image2.jpg");
+        expectedResponseSet.add("https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/2b367532-3481-4cd0-99b7-c5b9548f0c9d/heart-hands.jpg?format=2500w");
+        expectedResponseSet.add("https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/1675477709442-3K4OIXL4L1XJ3N6ZEIXZ/image-asset.jpeg?format=500w");
 
         // Deserialize the actual JSON response.
         String actualJson = sw.toString().trim();
