@@ -3,44 +3,59 @@
 This project is a web crawler and image extractor that scans a given URL, extracts images, classifies them, and displays the results. The application utilizes Selenium, OpenCV, and JSoup for image extraction, processing, and face detection.
 
 ## Features Implemented
-✅ Web Scraping & Image Extraction
+
+* Web Scraping & Image Extraction
 Implemented a web crawler using JSoup and Selenium to scrape images from web pages.
 
-## Extracts images from:
-<img> tags
-## Background images (style="background-image:url(...)")
-<source> tags (srcset attribute for responsive images)
-✅ Multithreaded Web Crawler
+## Extracts images from img tags 
+## Background images (style="background-image:url(...)") <source> tags (srcset attribute for responsive images)
+
+* Multithreaded Web Crawler
 Designed the CrawlerService to crawl multiple pages concurrently for better performance.
 Uses an executor service to manage crawling threads efficiently.
-✅ Image Resizing
+* Image Resizing
 Resized images to a standardized dimension (350x350) using Java’s BufferedImage API.
 Ensured images retain quality while resizing.
-✅ Image Categorization
+
+### Image Categorization
+
 Developed a classification system to identify:
-Favicons (Very small images, ≤ 32x32 pixels)
-Logos (Square-shaped images, typically small)
-Images Containing People (Implemented face detection)
-✅ Face Detection
+
+#### Favicons (Very small images, ≤ 32x32 pixels)
+#### Logos (Square-shaped images, typically small)
+#### Images Containing People (Implemented face detection)
+
+### Face Detection
+
 Implemented face detection using OpenCV’s Haar Cascade Classifier (haarcascade_frontalface_alt.xml).
+
 Used BufferedImage to Mat conversion for OpenCV image processing.
+
 Detected human faces in images to categorize people-containing images.
-✅ Dynamic Web Interface (Frontend)
+
+Dynamic Web Interface (Frontend)
+
 Improved UI with Bootstrap for a modern, interactive look.
 
 ## Added:
 Loading spinner while fetching images.
 Gallery layout for displaying extracted images.
 Popup modal when clicking images for better user interaction.
-✅ Deployment on Jetty
+
+### Deployment on Jetty
+
 Packaged the project as a WAR file.
 Deployed on Jetty Server for testing.
 Configured Jetty Start.ini to load OpenCV dynamically.
-✅ Testing
+
+### Testing
+
 Implemented JUnit tests in ImageFinderTest.java.
 Used Mockito to mock API requests and responses.
 Verified that extracted images are correctly fetched and classified.
-✅ Git Integration
+
+### Git Integration
+
 Set up Git version control for tracking changes.
 Added a proper .gitignore to exclude unnecessary files.
 Committed the latest code updates.
@@ -49,31 +64,44 @@ Backend: Java, Servlet API, JSoup, Selenium
 Frontend: HTML, CSS (Bootstrap), JavaScript (Fetch API)
 
 ### Libraries:
-OpenCV (for face detection & image processing)
-Selenium (for dynamic web page interaction)
-JSoup (for parsing HTML & extracting image links)
-Testing Frameworks: JUnit, Mockito
-Build & Deployment: Maven, Jetty Server
-Setup & Deployment Guide
-Prerequisites
-Install Java 8+
-Install Maven
-Install Jetty Server
-Download OpenCV 3.4.16 and configure the opencv_java3416.dll
-How to Run
-Clone the Repository:
+
+* OpenCV (for face detection & image processing)
+* Selenium (for dynamic web page interaction)
+* JSoup (for parsing HTML & extracting image links)
+* Testing Frameworks: JUnit, Mockito
+* Build & Deployment: Maven, Jetty Server
+* Setup & Deployment Guide
+
+### Prerequisites:
+#### Install Java 8+ 
+* link: https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html#license-lightbox
+#### Install Maven
+* link: https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip
+#### Install Jetty Server 
+* link: https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.56.v20240826/jetty-distribution-9.4.56.v20240826.zip
+#### Download OpenCV 3.4.16 and configure the opencv_java3416.dll 
+* link: https://sourceforge.net/projects/opencvlibrary/files/3.4.16/opencv-3.4.16-vc14_vc15.exe/download
+
+## How to Run:
+
+## Clone the Repository:
 
 # command:
 Copy
+
 Edit
+
 git clone <repository-url>
+
 cd imagefinder
-Build & Package the Project:
+
+## Build & Package the Project:
 
 ## Running the Project
 Here we will detail how to setup and run this project so you may get started, as well as the requirements needed to do so.
 
 ### Requirements
+
 Before beginning, make sure you have the following installed and ready to use
 
 Maven 3.5 or higher
@@ -82,15 +110,15 @@ Exact version, NOT Java 9+ - the build will fail with a newer version of Java
 Setup
 To start, open a terminal window and navigate to wherever you unzipped to the root directory imagefinder. To build the project, run the command:
 
-mvn package
+### mvn package
 
 If all goes well you should see some lines that end with "BUILD SUCCESS". When you build your project, maven should build it in the target directory. To clear this, you may run the command:
 
-mvn clean
+### mvn clean
 
 To run the project, use the following command to start the server:
 
-mvn clean test package jetty:run
+### mvn clean package jetty:run
 
 You should see a line at the bottom that says "Started Jetty Server". Now, if you enter localhost:8080 into your browser, you should see the index.html welcome page! If all has gone well to this point, you're ready to begin!
 
