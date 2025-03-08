@@ -27,20 +27,17 @@ Developed a classification system to identify:
 
 ### Face Detection
 
-Implemented face detection using OpenCV’s Haar Cascade Classifier (haarcascade_frontalface_alt.xml).
+* Implemented face detection using OpenCV’s Haar Cascade Classifier (haarcascade_frontalface_alt.xml).
 
-Used BufferedImage to Mat conversion for OpenCV image processing.
+* Used BufferedImage to Mat conversion for OpenCV image processing.
 
-Detected human faces in images to categorize people-containing images.
+* Detected human faces in images to categorize people-containing images.
 
-Dynamic Web Interface (Frontend)
+* Dynamic Web Interface (Frontend)
 
-Improved UI with Bootstrap for a modern, interactive look.
+* Improved UI with Bootstrap for a modern, interactive look.
 
-## Added:
-Loading spinner while fetching images.
-Gallery layout for displaying extracted images.
-Popup modal when clicking images for better user interaction.
+* Gallery layout for displaying extracted images.
 
 ### Deployment on Jetty
 
@@ -61,7 +58,7 @@ Added a proper .gitignore to exclude unnecessary files.
 Committed the latest code updates.
 Technologies Used
 Backend: Java, Servlet API, JSoup, Selenium
-Frontend: HTML, CSS (Bootstrap), JavaScript (Fetch API)
+Frontend: HTML, CSS, JavaScript
 
 ### Libraries:
 
@@ -84,16 +81,21 @@ Frontend: HTML, CSS (Bootstrap), JavaScript (Fetch API)
 
 ## How to Run:
 
-## Clone the Repository:
+* Clone the Repository:
 
-# command:
-Copy
+* Copy
 
-Edit
+* Edit
 
-git clone <repository-url>
+* git clone <repository-url>
 
-cd imagefinder
+* cd imagefinder
+
+* mvn clean
+
+* mvn install
+
+* mvn jetty:run
 
 ## Build & Package the Project:
 
