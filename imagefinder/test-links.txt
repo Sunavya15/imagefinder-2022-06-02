@@ -1,4 +1,13 @@
 Please paste your list of test URLs below:
 
+TEST IMAGES:
 https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/2b367532-3481-4cd0-99b7-c5b9548f0c9d/heart-hands.jpg?format=2500w
 https://images.squarespace-cdn.com/content/v1/633529fd9e46d97a3897b132/1675477709442-3K4OIXL4L1XJ3N6ZEIXZ/image-asset.jpeg?format=500w
+
+I have used google chromedriver:
+link: C:\\Users\\030825130\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe
+
+I have used the opencv:
+link: C:\\Users\\030825130\\Downloads\\opencv\\build\\java\\x64\\opencv_java3416.dll
+
+for testing i jave used random websites.

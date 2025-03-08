@@ -1,4 +1,4 @@
-##### Image Finder Web Scraper - Eulerity Take-Home Challenge
+# Image Finder Web Scraper - Eulerity Take-Home Challenge
 ## Overview
 This project is a web crawler and image extractor that scans a given URL, extracts images, classifies them, and displays the results. The application utilizes Selenium, OpenCV, and JSoup for image extraction, processing, and face detection.
 
@@ -70,17 +70,29 @@ git clone <repository-url>
 cd imagefinder
 Build & Package the Project:
 
-# command:
-Copy
-Edit
-mvn clean package
-Run on Jetty Server:
+## Running the Project
+Here we will detail how to setup and run this project so you may get started, as well as the requirements needed to do so.
 
-# command:
-Copy
-Edit
-mvn jetty:run
-Access the Web Interface: Open http://localhost:8080 in your browser.
+### Requirements
+Before beginning, make sure you have the following installed and ready to use
+
+Maven 3.5 or higher
+Java 8
+Exact version, NOT Java 9+ - the build will fail with a newer version of Java
+Setup
+To start, open a terminal window and navigate to wherever you unzipped to the root directory imagefinder. To build the project, run the command:
+
+mvn package
+
+If all goes well you should see some lines that end with "BUILD SUCCESS". When you build your project, maven should build it in the target directory. To clear this, you may run the command:
+
+mvn clean
+
+To run the project, use the following command to start the server:
+
+mvn clean test package jetty:run
+
+You should see a line at the bottom that says "Started Jetty Server". Now, if you enter localhost:8080 into your browser, you should see the index.html welcome page! If all has gone well to this point, you're ready to begin!
 
 ## Future Improvements
 Enhance face detection using DNN-based models (OpenCV DNN).
