@@ -54,4 +54,5 @@ public class ImageResizer {
         // 4) Write the resized image to the output path (using "jpg" as an example).
         ImageIO.write(resizedImage, "jpg", new File(outputImagePath));
     }
+    
 }

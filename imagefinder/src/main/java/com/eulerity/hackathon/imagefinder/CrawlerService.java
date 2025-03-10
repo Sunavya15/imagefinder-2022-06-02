@@ -114,6 +114,13 @@ public class CrawlerService {
                             }
                         }
                     }
+                    
+                    // Extract favicon for each crawled URL
+                    String faviconUrl = FaviconExtractor.extractFaviconUrl(url);
+                    if (faviconUrl != null) {
+                        FaviconExtractor.downloadFavicon(faviconUrl);
+                    }
+                    
                     pageImages.addAll(imageExtractorService.extractImages(url));
                 } else {
                     System.err.println("Skipping unsupported content type: " + contentType + " for URL: " + url);

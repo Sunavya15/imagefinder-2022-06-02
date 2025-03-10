@@ -79,23 +79,61 @@ Frontend: HTML, CSS, JavaScript
 #### Download OpenCV 3.4.16 and configure the opencv_java3416.dll 
 * link: https://sourceforge.net/projects/opencvlibrary/files/3.4.16/opencv-3.4.16-vc14_vc15.exe/download
 
-## How to Run:
+## Steps to Run the Image Finder Application
 
-* Clone the Repository:
+* This project is a web-based tool to extract **favicons, logos, and images** containing people from a given URL.
 
-* Copy
+## 🚀 How to Run
 
-* Edit
+### **1️⃣ Clone the Repository**
 
-* git clone <repository-url>
+git clone <repository-url>
 
-* cd imagefinder
+### 2️⃣ Navigate to the Project Directory
 
-* mvn clean
+cd imagefinder
 
-* mvn install
+### 3️⃣ Clean Any Previous Builds
 
-* mvn jetty:run
+mvn clean
+
+### 4️⃣ Install Dependencies and Build the Project
+
+mvn install
+
+### 5️⃣ Run the Application Using Jetty
+
+mvn jetty:run
+
+### Once the application is running, open:
+
+http://localhost:8080/
+
+## Testing the API in Postman
+
+* Use Postman or cURL to test the API.
+
+### POST Request:
+
+#### 1. URL: http://localhost:8080/main
+
+#### 2. Headers:
+
+* Content-Type: application/x-www-form-urlencoded
+
+* Body (form-data or x-www-form-urlencoded):
+
+* Key: url
+* Value: https://www.example.com
+
+#### Expected Response
+* json
+
+* [
+    * {"url": "https://www.example.com/logo.png", "type": "logo"},
+    * {"url": "https://www.example.com/favicon.ico", "type": "favicon"},
+    * {"url": "https://www.example.com/image1.jpg", "type": "people"}
+* ]
 
 ## Build & Package the Project:
 
@@ -125,7 +163,7 @@ To run the project, use the following command to start the server:
 You should see a line at the bottom that says "Started Jetty Server". Now, if you enter localhost:8080 into your browser, you should see the index.html welcome page! If all has gone well to this point, you're ready to begin!
 
 ## Future Improvements
-Enhance face detection using DNN-based models (OpenCV DNN).
+Enhance face detection using DNN-based models (OpenCV DNN)(haarcascade_frontalface_alt).
 Improve logo detection using custom ML models.
 Optimize the crawling process to prevent duplicate requests.
 Store processed images in a database instead of saving locally.

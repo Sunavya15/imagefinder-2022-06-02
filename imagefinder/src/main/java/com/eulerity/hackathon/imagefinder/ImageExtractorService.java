@@ -21,11 +21,15 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import com.eulerity.hackathon.imagefinder.FaceDetector;
 
 public class ImageExtractorService {
 
@@ -37,50 +41,60 @@ public class ImageExtractorService {
      * @param url The URL of the page to extract images from.
      * @return A list of public URLs for the processed images.
      */
-    public List<String> extractImages(String url) {
-        // Use a LinkedHashSet to preserve order and ensure uniqueness.
-        Set<String> imageUrls = new LinkedHashSet<>();
-        System.out.println("Extracting images from URL: " + url);
+    private static final HashSet<String> processedHashes = new HashSet<>();
 
-        // Set path to your ChromeDriver executable.
-        System.setProperty("webdriver.chrome.driver",
-                "C:\\Users\\030825130\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe");
+public List<String> extractImages(String url) {
+    Set<String> imageUrls = new LinkedHashSet<>();
+    System.out.println("Extracting images from URL: " + url);
 
-        // Set up ChromeOptions.
-        ChromeOptions options = new ChromeOptions();
-        // options.addArguments("--headless"); // Uncomment for headless mode if desired.
-        options.addArguments("--disable-gpu");
-        WebDriver driver = new ChromeDriver(options);
+    // Set up WebDriver
+    System.setProperty("webdriver.chrome.driver",
+            "C:\\Users\\030825130\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe");
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--disable-gpu");
+    WebDriver driver = new ChromeDriver(options);
 
-        try {
-            driver.get(url);
-            dismissCookieBannerIfPresent(driver);
-            scrollVerticallyUntilNoNewContent(driver);
-            clickCarouselArrows(driver, "button[aria-label='Next']");
-            horizontalScrollContainer(driver, "div.horizontal-scroll-container");
+    try {
+        driver.get(url);
+        dismissCookieBannerIfPresent(driver);
+        scrollVerticallyUntilNoNewContent(driver);
+        clickCarouselArrows(driver, "button[aria-label='Next']");
+        horizontalScrollContainer(driver, "div.horizontal-scroll-container");
 
-            WebDriverWait wait = new WebDriverWait(driver, 60);
-            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("img")));
+        WebDriverWait wait = new WebDriverWait(driver, 60);
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("img")));
 
-            extractFromImgTags(driver, imageUrls);
-            extractFromBackgroundImages(driver, imageUrls);
-            extractFromSourceTags(driver, imageUrls);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            driver.quit();
-        }
+        extractFromImgTags(driver, imageUrls);
+        extractFromBackgroundImages(driver, imageUrls);
+        extractFromSourceTags(driver, imageUrls);
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        driver.quit();
+    }
 
-        // Process each unique image: download, classify (before resizing), then resize.
-        List<String> processedImagePaths = new ArrayList<>();
-        for (String imageUrl : imageUrls) {
-            String processedPath = downloadClassifyAndResizeImage(imageUrl, 350, 350);
-            if (processedPath != null) {
-                processedImagePaths.add(processedPath);
+    // Process images (Check Hash Uniqueness)
+    Set<String> uniqueProcessedImages = new LinkedHashSet<>();
+
+    for (String imageUrl : imageUrls) {
+        String processedPath = downloadClassifyAndResizeImage(imageUrl, 350, 350);
+        if (processedPath != null) {
+            try {
+                String imageHash = computeFileHash(new File("src/main/webapp" + processedPath));
+                if (!processedHashes.contains(imageHash)) {
+                    processedHashes.add(imageHash);
+                    uniqueProcessedImages.add(processedPath);
+                } else {
+                    System.out.println("🚫 Duplicate detected, skipping: " + imageUrl);
+                }
+            } catch (Exception e) {
+                System.err.println("⚠ Error computing hash for " + processedPath + ": " + e.getMessage());
             }
         }
-        return processedImagePaths;
     }
+
+    return new ArrayList<>(uniqueProcessedImages);
+}
 
     /**
      * Normalizes a URL by trimming whitespace and removing a trailing slash.
@@ -232,47 +246,79 @@ public class ImageExtractorService {
      */
     private String downloadClassifyAndResizeImage(String imageUrl, int width, int height) {
         try {
-            // 1) Ensure the "resizedImages" folder exists.
-            File dir = new File("src/main/webapp/resizedImages");
-            if (!dir.exists()) {
-                dir.mkdirs();
+            File processedDir = new File("src/main/webapp/processedImages");
+            if (!processedDir.exists()) {
+                processedDir.mkdirs();
             }
-
-            // 2) Download the original image to a temporary file.
+    
+            File resizedDir = new File("src/main/webapp/resizedImages");
+            if (!resizedDir.exists()) {
+                resizedDir.mkdirs();
+            }
+    
+            // **Download image to `processedImages/`**
             URL url = new URL(imageUrl);
-            File tempFile = File.createTempFile("temp_", ".jpg");
+            String fileName = "img_" + System.currentTimeMillis() + ".jpg";
+            File tempFile = new File(processedDir, fileName);
             try (InputStream in = url.openStream()) {
                 Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-
-            // 3) Classify the image based on its original dimensions.
-            ImageCategory category = classifyImage(tempFile);
-            System.out.println("Image " + imageUrl + " classified as: " + category);
-
-            // 4) Compute the MD5 hash of the downloaded file.
-            String fileHash = computeFileHash(tempFile);
-            // Use the hash to build a deterministic filename.
+    
+            BufferedImage img = ImageIO.read(tempFile);
+            if (img == null) return null;
+    
+            File processedFile = tempFile;
+            boolean containsPeople = FaceDetector.containsFace(img);
+            boolean containsLogo = LogoDetector.containsLogo(tempFile.getAbsolutePath());
+    
+            // **Mark image if it contains people**
+            if (containsPeople) {
+                System.out.println("✅ People detected in: " + imageUrl);
+                FaceDetector.detectAndSaveFaces(tempFile.getAbsolutePath());
+                processedFile = new File(tempFile.getAbsolutePath().replace(".jpg", "_marked.jpg"));
+            }
+    
+            // **Detect logos without modifying image**
+            if (containsLogo) {
+                System.out.println("✅ Logo detected in: " + imageUrl);
+            }
+    
+            // **Extract favicon from the website's root domain**
+            String pageDomain = new URL(imageUrl).getProtocol() + "://" + new URL(imageUrl).getHost();
+            String faviconUrl = FaviconExtractor.extractFaviconUrl(pageDomain);
+    
+            if (faviconUrl != null) {
+                File faviconFile = FaviconExtractor.downloadFavicon(faviconUrl);
+                if (faviconFile != null && LogoDetector.containsLogo(faviconFile.getAbsolutePath())) {
+                    System.out.println("✅ Favicon is a logo: " + faviconUrl);
+                }
+            }
+    
+            // **Compute MD5 hash for duplicate detection**
+            String fileHash = computeFileHash(processedFile);
             String resizedFileName = "resized_" + fileHash + ".jpg";
-            File resizedFile = new File(dir, resizedFileName);
-
-            // 5) If the processed image already exists, delete the temp file and return its URL.
+            File resizedFile = new File(resizedDir, resizedFileName);
+    
+            // **Skip re-processing if already exists**
             if (resizedFile.exists()) {
-                System.out.println("Image already processed, using existing file: " + resizedFileName);
-                tempFile.delete();
+                processedFile.delete();
                 return "/resizedImages/" + resizedFileName;
             }
-
-            // 6) Resize the image using the original file.
-            ImageResizer.resize(tempFile.getAbsolutePath(), resizedFile.getAbsolutePath(), width, height);
-            tempFile.delete();
-
-            // 7) Return the public URL.
+    
+            // **Resize image while preserving color**
+            ImageResizer.resize(processedFile.getAbsolutePath(), resizedFile.getAbsolutePath(), width, height);
+    
+            // **Delete temporary processed image**
+            processedFile.delete();
+    
             return "/resizedImages/" + resizedFileName;
         } catch (Exception e) {
-            System.err.println("Error processing image: " + imageUrl + " - " + e.getMessage());
+            System.err.println("❌ Error processing image: " + imageUrl + " - " + e.getMessage());
             return null;
         }
     }
+    
+    
 
     /**
      * Computes the MD5 hash of a file.
@@ -344,4 +390,20 @@ public class ImageExtractorService {
     //     // For real face detection, integrate OpenCV's CascadeClassifier or similar.
     //     return false;
     // }
+
+    public void clearProcessedImages() {
+        deleteDirectoryContents(new File("src/main/webapp/processedImages"));
+        deleteDirectoryContents(new File("src/main/webapp/resizedImages"));
+        System.out.println("✅ Cleared old images from processedImages/ and resizedImages/");
+    }
+    
+    private void deleteDirectoryContents(File dir) {
+        if (dir.exists() && dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                file.delete();
+            }
+        }
+    }
+    
 }
+
