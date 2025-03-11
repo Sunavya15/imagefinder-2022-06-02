@@ -7,9 +7,15 @@ This project is a web crawler and image extractor that scans a given URL, extrac
 * Web Scraping & Image Extraction
 Implemented a web crawler using JSoup and Selenium to scrape images from web pages.
 
+<<<<<<< HEAD
 ### Extracts images from img tags 
 
 ### Background images (style="background-image:url(...)") source tags (srcset attribute for responsive images)
+=======
+### Extracts images from <img> tags 
+
+### Background images (style="background-image:url(...)") <source> tags (srcset attribute for responsive images)
+>>>>>>> 5b210d5b4eb6241f501d1214fedbc80fa02ccec4
 
 * Multithreaded Web Crawler
 Designed the CrawlerService to crawl multiple pages concurrently for better performance.
@@ -166,4 +172,8 @@ You should see a line at the bottom that says "Started Jetty Server". Now, if yo
 * Enhanced face detection using DNN-based models (OpenCV DNN)(haarcascade_frontalface_alt).
 * Improve logo detection using custom ML models.
 * Optimized the crawling process to prevent duplicate requests.
+<<<<<<< HEAD
 * Store processed images in a database instead of saving locally.
+=======
+* Store processed images in a database instead of saving locally.
+>>>>>>> 5b210d5b4eb6241f501d1214fedbc80fa02ccec4
