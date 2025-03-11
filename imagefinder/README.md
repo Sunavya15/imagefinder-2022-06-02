@@ -7,8 +7,9 @@ This project is a web crawler and image extractor that scans a given URL, extrac
 * Web Scraping & Image Extraction
 Implemented a web crawler using JSoup and Selenium to scrape images from web pages.
 
-## Extracts images from img tags 
-## Background images (style="background-image:url(...)") <source> tags (srcset attribute for responsive images)
+### Extracts images from img tags 
+
+### Background images (style="background-image:url(...)") source tags (srcset attribute for responsive images)
 
 * Multithreaded Web Crawler
 Designed the CrawlerService to crawl multiple pages concurrently for better performance.
@@ -78,6 +79,7 @@ Frontend: HTML, CSS, JavaScript
 * link: https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.56.v20240826/jetty-distribution-9.4.56.v20240826.zip
 #### Download OpenCV 3.4.16 and configure the opencv_java3416.dll 
 * link: https://sourceforge.net/projects/opencvlibrary/files/3.4.16/opencv-3.4.16-vc14_vc15.exe/download
+#### Download haarcascade_frontalface_alt.xml model    
 
 ## Steps to Run the Image Finder Application
 
@@ -129,26 +131,24 @@ http://localhost:8080/
 #### Expected Response
 * json
 
-* [
-    * {"url": "https://www.example.com/logo.png", "type": "logo"},
-    * {"url": "https://www.example.com/favicon.ico", "type": "favicon"},
-    * {"url": "https://www.example.com/image1.jpg", "type": "people"}
-* ]
+[
+    {"url": "https://www.example.com/logo.png", "type": "logo"},
+    {"url": "https://www.example.com/favicon.ico", "type": "favicon"},
+    {"url": "https://www.example.com/image1.jpg", "type": "people"}
+]
 
-## Build & Package the Project:
-
-## Running the Project
+## Running the Project:
 Here we will detail how to setup and run this project so you may get started, as well as the requirements needed to do so.
 
 ### Requirements
 
 Before beginning, make sure you have the following installed and ready to use
 
-Maven 3.5 or higher
-Java 8
-Exact version, NOT Java 9+ - the build will fail with a newer version of Java
+* Maven 3.5 or higher
+* Java 8
+* Exact version, NOT Java 9+ - the build will fail with a newer version of Java
 Setup
-To start, open a terminal window and navigate to wherever you unzipped to the root directory imagefinder. To build the project, run the command:
+* To start, open a terminal window and navigate to wherever you unzipped to the root directory imagefinder. To build the project, run the command:
 
 ### mvn package
 
@@ -162,8 +162,8 @@ To run the project, use the following command to start the server:
 
 You should see a line at the bottom that says "Started Jetty Server". Now, if you enter localhost:8080 into your browser, you should see the index.html welcome page! If all has gone well to this point, you're ready to begin!
 
-## Future Improvements
-Enhance face detection using DNN-based models (OpenCV DNN)(haarcascade_frontalface_alt).
-Improve logo detection using custom ML models.
-Optimize the crawling process to prevent duplicate requests.
-Store processed images in a database instead of saving locally.
+## Improvements
+* Enhanced face detection using DNN-based models (OpenCV DNN)(haarcascade_frontalface_alt).
+* Improve logo detection using custom ML models.
+* Optimized the crawling process to prevent duplicate requests.
+* Store processed images in a database instead of saving locally.

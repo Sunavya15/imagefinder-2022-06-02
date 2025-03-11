@@ -347,37 +347,37 @@ public List<String> extractImages(String url) {
      * @param imageFile the image file to classify.
      * @return the ImageCategory of the image, or null if no special classification.
      */
-    private ImageCategory classifyImage(File imageFile) {
-        try {
-            BufferedImage img = ImageIO.read(imageFile);
-            if (img == null) {
-                return null;
-            }
-            int width = img.getWidth();
-            int height = img.getHeight();
+    // private ImageCategory classifyImage(File imageFile) {
+    //     try {
+    //         BufferedImage img = ImageIO.read(imageFile);
+    //         if (img == null) {
+    //             return null;
+    //         }
+    //         int width = img.getWidth();
+    //         int height = img.getHeight();
 
-            // Favicon: very small image (typically <= 32x32).
-            if (width <= 32 && height <= 32) {
-                return ImageCategory.FAVICON;
-            }
+    //         // Favicon: very small image (typically <= 32x32).
+    //         if (width <= 32 && height <= 32) {
+    //             return ImageCategory.FAVICON;
+    //         }
 
-            // Logo: roughly square and small (e.g., less than 200px on the long side).
-            if (Math.abs(width - height) < 20 && width < 200 && height < 200) {
-                return ImageCategory.LOGO;
-            }
+    //         // Logo: roughly square and small (e.g., less than 200px on the long side).
+    //         if (Math.abs(width - height) < 20 && width < 200 && height < 200) {
+    //             return ImageCategory.LOGO;
+    //         }
 
-            // Contains People: stubbed face detection.
-            if (FaceDetector.containsFace(img)) {
-                return ImageCategory.CONTAINS_PEOPLE;
-            }
+    //         // Contains People: stubbed face detection.
+    //         if (FaceDetector.containsFace(img)) {
+    //             return ImageCategory.CONTAINS_PEOPLE;
+    //         }
 
-            // No special category.
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    //         // No special category.
+    //         return null;
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return null;
+    //     }
+    // }
 
     /**
      * Stub for face detection.

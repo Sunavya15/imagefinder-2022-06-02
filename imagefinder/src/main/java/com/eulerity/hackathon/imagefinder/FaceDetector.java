@@ -1,7 +1,6 @@
 package com.eulerity.hackathon.imagefinder;
 
 import org.opencv.core.*;
-import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
@@ -24,7 +23,7 @@ public class FaceDetector {
             throw e;
         }
 
-        String classifierPath = "C:\\Users\\030825130\\Downloads\\imagefinder-2022-06-02\\imagefinder\\src\\main\\resources\\haarcascade_frontalface_alt.xml";
+        String classifierPath = "C:\\Users\\030825130\\Downloads\\imagefinder-2022-06-02\\imagefinder\\src\\main\\resources\\haarcascade_frontalface_alt (1).xml";
         faceDetector = new CascadeClassifier(classifierPath);
         if (faceDetector.empty()) {
             System.err.println("❌ Failed to load Haar Cascade classifier from: " + classifierPath);
@@ -103,4 +102,14 @@ public class FaceDetector {
         image.getRaster().setDataElements(0, 0, matRgb.width(), matRgb.height(), data);
         return image;
     }
+    public static void main(String[] args) {
+    if (args.length == 0) {
+        System.err.println("❌ Please provide an image path as an argument.");
+        return;
+    }
+
+    String imagePath = args[0];
+    detectAndSaveFaces(imagePath);
+}
+
 }
