@@ -17,7 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class FaviconExtractor {
-    private static final String FAVICON_DIR = "C:\\Users\\030825130\\Downloads\\imagefinder-2022-06-02\\imagefinder\\src\\main\\resources\\templates\\favicons";
+    private static final String FAVICON_DIR = "src/main/resources/templates/favicons";
 
     public static String extractFaviconUrl(String pageUrl) {
         try {
@@ -60,40 +60,42 @@ public class FaviconExtractor {
             if (!faviconDir.exists()) {
                 faviconDir.mkdirs();
             }
-
+    
             // **Generate a unique filename based on the website URL**
             String domainHash = hashDomain(url.getHost());
             String extension = faviconUrl.endsWith(".png") ? "png" : "ico";
             String fileName = "favicon_" + domainHash + "." + extension;
             File destinationFile = new File(FAVICON_DIR, fileName);
-
-            // **Check if the file already exists**
-            if (destinationFile.exists()) {
+    
+            // **Check if an identical favicon already exists**
+            if (destinationFile.exists() && destinationFile.length() > 0) {
                 System.out.println("⚠️ Favicon already exists, skipping download: " + destinationFile.getAbsolutePath());
                 return destinationFile;
             }
-
+    
             // **Download the favicon**
             try (InputStream in = url.openStream()) {
                 Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-
+    
             System.out.println("✅ Favicon downloaded: " + destinationFile.getAbsolutePath());
-
+    
             // **Convert .ico to .png if needed**
             if (extension.equals("ico")) {
                 File pngFile = new File(FAVICON_DIR, fileName.replace(".ico", ".png"));
                 if (convertICOtoPNG(destinationFile, pngFile)) {
+                    System.out.println("✅ Converted ICO to PNG: " + pngFile.getAbsolutePath());
                     return pngFile;
                 }
             }
-
+    
             return destinationFile;
         } catch (Exception e) {
             System.err.println("❌ Error downloading favicon: " + e.getMessage());
             return null;
         }
     }
+    
 
     // **Check if favicon URL is valid**
     private static boolean isValidFavicon(String faviconUrl) {
@@ -139,9 +141,59 @@ public class FaviconExtractor {
             for (byte b : hash) {
                 hexString.append(String.format("%02x", b));
             }
-            return hexString.toString().substring(0, 10); // Shorten for filename
+            return hexString.toString().substring(0, 10); // Shortened for filename
         } catch (NoSuchAlgorithmException e) {
             return domain.replace(".", "_"); // Fallback
         }
     }
-}
+
+    private static void cleanFaviconFolder() {
+        File faviconDir = new File(FAVICON_DIR);
+        if (!faviconDir.exists()) {
+            return; // If the directory doesn't exist, there's nothing to clean
+        }
+    
+        File[] files = faviconDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete(); // Delete each favicon file
+                }
+            }
+        }
+        System.out.println("🧹 Favicon folder cleaned before running.");
+    }
+    
+    
+
+    /**
+     * **Main method to run FaviconExtractor as a standalone program**
+     */
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Usage: java FaviconExtractor <website-url>");
+            return;
+        }
+    
+        String websiteUrl = args[0];
+        System.out.println("🔍 Extracting favicon from: " + websiteUrl);
+    
+        // **Clean favicon folder before each run**
+        cleanFaviconFolder();
+    
+        // Extract favicon URL
+        String faviconUrl = extractFaviconUrl(websiteUrl);
+        if (faviconUrl == null) {
+            System.out.println("🚫 No favicon found for: " + websiteUrl);
+            return;
+        }
+    
+        // Download favicon
+        File faviconFile = downloadFavicon(faviconUrl);
+        if (faviconFile != null) {
+            System.out.println("✅ Favicon saved at: " + faviconFile.getAbsolutePath());
+        } else {
+            System.out.println("🚫 Failed to download favicon.");
+        }
+    }
+}  

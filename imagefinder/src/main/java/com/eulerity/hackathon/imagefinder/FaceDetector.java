@@ -71,7 +71,8 @@ public class FaceDetector {
                 // **Mark entire image with a red border** if people are present.
                 Imgproc.rectangle(matImage, new Point(5, 5), 
                         new Point(matImage.cols() - 5, matImage.rows() - 5), 
-                        new Scalar(0, 0, 255), 30); // 🔴 Red border
+                        new Scalar(0, 255, 0), // 🟢 Green box
+                        5);; //
 
                 // Save the marked image.
                 String outputPath = imagePath.replace(".jpg", "_marked.jpg");
