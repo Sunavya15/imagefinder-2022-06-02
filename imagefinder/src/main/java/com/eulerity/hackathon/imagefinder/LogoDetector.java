@@ -36,11 +36,34 @@ public class LogoDetector {
     }
 
     /**
+     * Cleans the `detected_logos/` folder before each run.
+     */
+    private static void cleanLogoFolder() {
+        File logoDir = new File(LOGO_DIR);
+        if (!logoDir.exists()) {
+            return; // If the directory doesn't exist, there's nothing to clean.
+        }
+
+        File[] files = logoDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete(); // Delete each logo file.
+                }
+            }
+        }
+        System.out.println("🧹 Logo folder cleaned before running.");
+    }
+
+    /**
      * Detects a logo from a given URL (website or direct image).
      * @param inputUrl The URL to check.
      * @return True if a logo is detected.
      */
     public static boolean detectLogo(String inputUrl) {
+        // **Call cleanLogoFolder() before starting detection**
+        cleanLogoFolder();
+
         try {
             if (isImageURL(inputUrl)) {
                 // ✅ URL is a direct image, download and analyze
@@ -143,6 +166,9 @@ public class LogoDetector {
         return keypoints.size().height > 50;  // Arbitrary threshold for logo-like features
     }
 
+    /**
+     * **Main method to run LogoDetector as a standalone program.**
+     */
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("Usage: java LogoDetector <image-url or website-url>");

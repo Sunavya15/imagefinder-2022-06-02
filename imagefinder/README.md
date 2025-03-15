@@ -79,9 +79,14 @@ Frontend: HTML, CSS, JavaScript
 * link: https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.56.v20240826/jetty-distribution-9.4.56.v20240826.zip
 #### Download OpenCV 3.4.16 and configure the opencv_java3416.dll 
 * link: https://sourceforge.net/projects/opencvlibrary/files/3.4.16/opencv-3.4.16-vc14_vc15.exe/download
-#### Download haarcascade_frontalface_alt.xml model    
+#### Google Chrome Driver
+* link: https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.88/win64/chromedriver-win64.zip
+#### Download haarcascade_frontalface_alt.xml model 
+* link: https://github.com/oreillymedia/Learning-OpenCV-3_examples/blob/master/haarcascade_frontalface_alt.xml   
 
 ## Steps to Run the Image Finder Application
+
+### please replace the local paths in the present in the code files with local paths to your downloaded files(opencv, chromedriver, haarcascade_frontalface_alt.xml) 
 
 * This project is a web-based tool to extract **favicons, logos, and images** containing people from a given URL.
 
@@ -164,6 +169,5 @@ You should see a line at the bottom that says "Started Jetty Server". Now, if yo
 
 ## Improvements
 * Enhanced face detection using DNN-based models (OpenCV DNN)(haarcascade_frontalface_alt).
-* Improve logo detection using custom ML models.
+* Improved logo detection using custom ML models.
 * Optimized the crawling process to prevent duplicate requests.
-* Store processed images in a database instead of saving locally.
